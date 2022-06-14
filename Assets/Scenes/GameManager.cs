@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 //WebGL branch
-//GitHub test
 /*------------------------------------------------------------
 
 遊戲主循環控制器:
