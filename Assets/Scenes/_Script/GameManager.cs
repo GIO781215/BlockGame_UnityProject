@@ -94,7 +94,8 @@ public class GameManager : MonoBehaviour
  
     void SpawnBlock() //方塊生成函數
     {
-        GameObject newMovingBlock = Instantiate(BlockPerfab, CurrentCenter, Quaternion.identity, this.transform.Find("tempBlocks"));  //實例化 GameObject 物件 (第四個參數是生成的實體要把誰當作父對象)                                                                                                        
+        GameObject newMovingBlock = Instantiate(BlockPerfab, new Vector3(CurrentCenter.x, CurrentCenter.y - 100, CurrentCenter.z), Quaternion.identity, this.transform.Find("tempBlocks"));  //實例化 GameObject 物件 (第四個參數是生成的實體要把誰當作父對象)  (一開始先讓方塊生成在畫面看不到的位置以解決殘影問題)
+        newMovingBlock.GetComponent<BlockBehavior>().Y_need_to_add_100 = true;                                                                                                                                          
         newMovingBlock.GetComponent<BlockBehavior>().SpawnInit(CurrentCenter, CurrentMoveDirection, CurrentScale); //因為實例化時指定了 BlockPerfab 做為模板物件 , 且在 Unity 中有將其設為 FirstBlock , 且有把 BlockBehavior 腳本掛在 FirstBlock 下 , 所以能夠用 GetComponent<BlockBehavior> 取用其中的函數與變數    
         MovingBlock = newMovingBlock; 
 
@@ -290,12 +291,15 @@ public class GameManager : MonoBehaviour
 
         while (true)
         {
-
+           
             Init();
             yield return new WaitUntil(() => !StartButton.activeInHierarchy); //如果開始按鈕按下把自己取消 SetActive 後才放行
             AudioManager.Instance.PlayStartSound(); //播放遊戲開始音效
+            CameraManager.Instance.ResetFocusDistance(); //將攝影機焦距設為 5
+            
             while (!isFail)
             {
+               
 
                 SpawnBlock();
 
@@ -312,7 +316,7 @@ public class GameManager : MonoBehaviour
 
                 ChangeBlockDirection();
 
-                if (Combo >= 5)
+                if (Combo >= 8)
                 {
                     RecoverBlock();
                     //Combo=0; //讓玩家連續 Combo 的話也能一直復原方塊好了
@@ -322,8 +326,11 @@ public class GameManager : MonoBehaviour
             }
 
             //Print Fail UI
+            StartCoroutine( CameraManager.Instance.Blur() ); //讓攝影機變模糊，記得要用 StartCoroutine 的方式呼叫才有效果，這個錯誤編譯器不會報，要注意           
             RestartButton.SetActive(true); //讓重新開始按鈕顯示出來
             yield return new WaitUntil(() => !RestartButton.activeInHierarchy); //等待重新開始按鈕被按下
+            StartCoroutine( CameraManager.Instance.Focus() ); //讓攝影機變清晰，記得要用 StartCoroutine 的方式呼叫才有效果，這個錯誤編譯器不會報，要注意
+
             Restart();
 
         }

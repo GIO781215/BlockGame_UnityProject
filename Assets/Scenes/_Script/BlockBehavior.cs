@@ -26,7 +26,7 @@ public class BlockBehavior : MonoBehaviour
     private float MovingSpeed = 10; //方塊移動速度，小心設成 public 在這邊改值就沒效果了，變成要到 Unity 裡改
     private float StartPositionOffset = 22; //方塊生成時與中心位置的偏移量
     private float StartTime;
-
+    [HideInInspector] public bool Y_need_to_add_100 = false; //將生成時 Y 軸先減掉 100 的數值還原用的參數
 
 
     //===================================== 此 GameObject 本身的行為 =====================================
@@ -38,7 +38,13 @@ public class BlockBehavior : MonoBehaviour
 
     void Update()
     {
-     if(Moving)
+        if (Y_need_to_add_100 == true)
+        {
+            transform.position += new Vector3(0, 100, 0);
+            Y_need_to_add_100 = false;
+        }
+
+        if (Moving)
         {
             if(MoveDirection == Vector3.forward)
             {
@@ -58,11 +64,9 @@ public class BlockBehavior : MonoBehaviour
 
     public void SpawnInit(Vector3 center, Vector3 moveDirection, Vector3 scale) //方塊初始生成函數
     {
-        StartTime = Time.time; //紀錄方塊生成時的時間
         Center = center;
         MoveDirection = moveDirection;
-        Moving = true;
-
+        StartTime = Time.time; //紀錄方塊生成時的時間
         transform.localScale = scale; //這邊的 transform.localScale 其實也是 this.transform.localScale 也就是掛載腳本的 GameObjects
     }
 
@@ -84,7 +88,7 @@ public class BlockBehavior : MonoBehaviour
 
         Vector3 oldLocalScale = transform.localScale; 
         //改寫成花 0.25 秒跑完這個 while
-        while ((Time.time - recoverTime)<0.25f)  
+        while ((Time.time - recoverTime) <= 0.25f)  
         {
             transform.localScale = oldLocalScale + scaleDifference * ((Time.time - recoverTime) / 0.25f); //依時間來增加數值的另一種寫法
             transform.position += posDifference * Time.deltaTime * 4;
