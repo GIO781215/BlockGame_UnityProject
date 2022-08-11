@@ -6,6 +6,7 @@ using UnityEngine.Rendering.PostProcessing; //這跟老師用的不一樣，我用的 PostPro
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance;
+    public Vector3 startPosition; //攝影機的起始座標
     public Vector3 NextPostion;
     //public PostProcessProfile profile; //我用的 PostProcessing 不需要
 
@@ -22,6 +23,7 @@ public class CameraManager : MonoBehaviour
 
    void Start()
     {
+        startPosition = transform.position;
         NextPostion = transform.position;
 
         myPostProcessVolume = GetComponent<PostProcessVolume>(); //得到在 Unity 裡的 PostProcessVolume 組件
@@ -30,7 +32,8 @@ public class CameraManager : MonoBehaviour
 
     public void GoUp() //讓攝影機往上移動一單位
     {
-        NextPostion = transform.position + Vector3.up;
+        if (GameManager.Instance.Score > 3)
+            NextPostion = startPosition + (GameManager.Instance.Score - 3) * Vector3.up;
     }
 
     public void ToStartPos() //讓攝影機移回遊戲開始時的位置

@@ -55,6 +55,9 @@ public class GameManager : MonoBehaviour
     public GameObject RestartButton;
     private bool isFail = false;
 
+    public float ClearDistance = 1f; //確定剛好對準的距離
+
+
     #endregion 
 
     void Awake()
@@ -119,7 +122,7 @@ public class GameManager : MonoBehaviour
         }
 
         //如果幾乎沒有偏移
-        if (Mathf.Abs(offset) < 0.5f)
+        if (Mathf.Abs(offset) < ClearDistance)
         {
             aboveBlock.GetComponent<BlockBehavior>().Moving = false;
             aboveBlock.transform.position = CurrentCenter;
@@ -192,7 +195,7 @@ public class GameManager : MonoBehaviour
         }
 
         //如果幾乎沒有偏移
-        if (Mathf.Abs(offset) < 0.5f) 
+        if (Mathf.Abs(offset) < ClearDistance) 
         {
             aboveBlock.GetComponent<BlockBehavior>().Moving = false;
             aboveBlock.transform.position = CurrentCenter;
